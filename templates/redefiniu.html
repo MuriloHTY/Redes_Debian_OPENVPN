@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Redefinir Senha</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .background {
+            background-image: url('/static/images/redefiniu/redefiniu.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+        }
+        form {
+            width: 400px;
+            background-color: rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.1);
+            padding: 50px 35px;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%,-50%);
+            box-shadow: 0 0 40px rgba(8,7,16,0.2);
+        }
+        form h3 {
+            font-size: 28px;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            color: #fff;
+            margin-top: 20px;
+            display: block;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+        ::placeholder {
+            color: #ddd;
+        }
+        button {
+            width: 100%;
+            margin-top: 30px;
+            background-color: #1C2B32;
+            color: #45A0E5;
+            padding: 15px;
+            font-weight: bold;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .info {
+            font-size: 14px;
+            margin-top: 10px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <form method="POST">
+        <h3>Redefina sua senha</h3>
+
+        <input type="hidden" name="token" value="{{ token }}">
+
+        <label for="newpass">Nova senha</label>
+        <input type="password" id="newpass" name="newpass" required
+               pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}"
+               placeholder="Nova senha segura" />
+
+        <label for="newpass2">Confirmacao</label>
+        <input type="password" id="newpass2" name="newpass2" required placeholder="Repita a nova senha" />
+
+        <p class="info">Minimo 8 caracteres, 1 letra maiuscula, 1 numero e 1 simbolo (!@#$%...)</p>
+
+        <button type="submit">Redefinir senha</button>
+    </form>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const senha = document.getElementById('newpass').value;
+            const confirmar = document.getElementById('newpass2').value;
+
+            if (senha !== confirmar) {
+                alert('As senhas nao coincidem.');
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Painel de Administrador - Redes</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style/index/adm/style.css') }}">
+</head>
+<body>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- Cartao principal -->
+<div class="card-container">
+  <div class="upper-container">
+    <div class="image-container">
+      <img src="https://api.dicebear.com/7.x/thumbs/svg?seed={{ user }}" alt="imagem de perfil" />
+    </div>
+    <div class="exit-button" style="position: absolute; top: 10px; right: 10px; padding: 5px;">
+      <a href="{{ url_for('logout') }}">
+        <img src="{{ url_for('static', filename='images/index/adm/sair.png') }}" alt="Sair" style="height: 32px; width: 32px;">
+      </a>
+    </div>
+  </div>
+
+  <div class="lower-container">
+    <div>
+      <h3>{{ user }}</h3>
+      <h4>Administrador de Redes</h4>
+    </div>
+    <div>
+      <p>Ola admin, tudo bem? Aqui voce pode baixar certificados, incluir usuarios, excluir usuarios e gerenciar acessos.</p>
+    </div>
+    <div>
+      <a href="{{ url_for('gerar_e_baixar_certificado') }}" class="btn">Gerar Certificados VPN</a>
+      <a href="#" id="openAddUserModal" class="btn">Adicionar Novo Usuario</a>
+      <a href="#" id="openDeleteUserModal" class="btn">Excluir Usuarios</a>
+      <a href="#" id="openLiberarModal" class="btn">Liberar Acessos</a>
+      <a href="#" id="openRevogarModal" class="btn">Revogar Acessos</a>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Adicionar Usuario -->
+<div id="addUserModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.6); justify-content:center; align-items:center;">
+  <div class="popup">
+    <h3>Adicionar Usuario</h3>
+    <form id="addUserForm" method="POST" action="{{ url_for('adicionar_usuario') }}">
+      <label for="username">Username:</label><br>
+      <input type="text" id="username" name="username" required minlength="3" maxlength="30"><br><br>
+
+      <label for="email">E-mail:</label><br>
+      <input type="email" id="email" name="email" required><br><br>
+
+      <label for="password">Senha:</label><br>
+      <input type="password" id="password" name="password" required minlength="6"><br><br>
+
+      <label>
+        <input type="checkbox" name="admin" id="adminToggle"> Admin
+      </label><br><br>
+
+      <button type="submit" class="btn add">Adicionar</button>
+      <button type="button" id="closeAddUserModal" class="btn cancel">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Excluir Usuario -->
+<div id="deleteUserModal" style="display:none; position:fixed; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.6); justify-content:center; align-items:center;">
+  <div class="popup">
+    <h3>Selecionar Usuarios para Exclusao</h3>
+    <form id="deleteUserForm" method="POST" action="{{ url_for('excluir_usuarios') }}">
+      <table style="width:100%; margin-top: 15px;">
+        <thead>
+          <tr>
+            <th>Acoes</th>
+            <th>Username</th>
+            <th>E-mail</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in usuarios %}
+          <tr>
+            <td><input type="checkbox" name="usuarios_selecionados" value="{{ u.username }}"></td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div style="margin-top: 20px; text-align: center;">
+        <button type="submit" class="btn cancel">Excluir</button>
+        <button type="button" id="closeDeleteUserModal" class="btn cancelE">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Liberar Acessos -->
+<div id="liberarAcessosModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.6); justify-content:center; align-items:center;">
+  <div class="popup">
+    <h3>Selecionar Usuarios para Liberar Acesso</h3>
+    <form id="liberarForm" method="POST" action="{{ url_for('liberar_acessos') }}">
+      <table style="width:100%; margin-top: 15px;">
+        <thead>
+          <tr>
+            <th>Acoes</th>
+            <th>Username</th>
+            <th>E-mail</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in usuarios %}
+          <tr>
+            <td><input type="checkbox" name="usuarios_selecionados" value="{{ u.username }}"></td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div style="margin-top: 20px; text-align: center;">
+        <button type="submit" class="btn add">Liberar</button>
+        <button type="button" id="closeLiberarModal" class="btn cancel">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Revogar Acessos -->
+<div id="revogarAcessosModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.6); justify-content:center; align-items:center;">
+  <div class="popup">
+    <h3>Selecionar Usuarios para Revogar Acesso</h3>
+    <form id="revogarForm" method="POST" action="{{ url_for('revogar_acessos') }}">
+      <table style="width:100%; margin-top: 15px;">
+        <thead>
+          <tr>
+            <th>Acoes</th>
+            <th>Username</th>
+            <th>E-mail</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in usuarios %}
+          <tr>
+            <td><input type="checkbox" name="usuarios_selecionados" value="{{ u.username }}"></td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div style="margin-top: 20px; text-align: center;">
+        <button type="submit" class="btn cancel">Revogar</button>
+        <button type="button" id="closeRevogarModal" class="btn cancelE">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Link externo -->
+<a target="_blank" href="https://www.rustcodeweb.com/" 
+   style="position: fixed; bottom: 1rem; right: 1rem; background: #FFD166; color: #073B4C; text-decoration: none; padding: 0.5rem 1rem; border: 3px solid #073B4C; box-shadow: 3px 3px 0 #073B4C; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.875rem; transition: all 0.3s; z-index: 1200; border-radius: 2px; display: flex; align-items: center; gap: 0.5rem;"
+   onmouseover="this.style.background='#F8F9FA'; this.style.transform='translate(-1px, -1px)'; this.style.boxShadow='4px 4px 0 #073B4C';"
+   onmouseout="this.style.background='#FFD166'; this.style.transform='translate(0, 0)'; this.style.boxShadow='3px 3px 0 #073B4C';"
+   onmousedown="this.style.transform='translate(0, 0)'; this.style.boxShadow='2px 2px 0 #073B4C';"
+   onmouseup="this.style.transform='translate(-1px, -1px)'; this.style.boxShadow='4px 4px 0 #073B4C';"
+   aria-label="Visit rustcodeweb.com">
+  <i class="fas fa-link" style="font-size: 1rem;"></i>
+  rustcodeweb.com
+</a>
+
+<!-- Scripts -->
+<script>
+  document.getElementById('openAddUserModal').onclick = function(e) {
+    e.preventDefault();
+    document.getElementById('addUserModal').style.display = 'flex';
+  };
+  document.getElementById('closeAddUserModal').onclick = function() {
+    document.getElementById('addUserModal').style.display = 'none';
+  };
+
+  document.getElementById('openDeleteUserModal').onclick = function(e) {
+    e.preventDefault();
+    document.getElementById('deleteUserModal').style.display = 'flex';
+  };
+  document.getElementById('closeDeleteUserModal').onclick = function() {
+    document.getElementById('deleteUserModal').style.display = 'none';
+  };
+
+  document.getElementById('openLiberarModal').onclick = function(e) {
+    e.preventDefault();
+    document.getElementById('liberarAcessosModal').style.display = 'flex';
+  };
+  document.getElementById('closeLiberarModal').onclick = function() {
+    document.getElementById('liberarAcessosModal').style.display = 'none';
+  };
+
+  document.getElementById('openRevogarModal').onclick = function(e) {
+    e.preventDefault();
+    document.getElementById('revogarAcessosModal').style.display = 'flex';
+  };
+  document.getElementById('closeRevogarModal').onclick = function() {
+    document.getElementById('revogarAcessosModal').style.display = 'none';
+  };
+</script>
+
+</body>
+</html>

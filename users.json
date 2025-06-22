@@ -1,0 +1,18 @@
+[
+    {
+        "username": "murilo",
+        "password": "Teste@123",
+        "email": "murilo.oliveira46@fatec.sp.gov.br"
+    },
+    {
+        "username": "admin",
+        "password": "123",
+        "email": "admin@fatec.com.br"
+    },
+    {
+        "username": "vanessa",
+        "email": "vanessa@fatec.com.br",
+        "password": "1234567",
+        "admin": false
+    }
+]

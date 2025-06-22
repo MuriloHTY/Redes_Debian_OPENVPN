@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Redefinir Senha</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style media="screen">
+      *,
+      *:before,
+      *:after {
+          padding: 0;
+          margin: 0;
+          box-sizing: border-box;
+      }
+      .background {
+          background-image: url('/static/images/redefinir/disconected.png');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          z-index: -1;
+      }
+      form {
+          height: 380px;
+          width: 400px;
+          background-color: rgba(0, 0, 0, 0.20);
+          position: absolute;
+          transform: translate(-50%, -50%);
+          top: 50%;
+          left: 50%;
+          border-radius: 10px;
+          backdrop-filter: blur(10px);
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          box-shadow: 0 0 40px rgba(8, 7, 16, 0.2);
+          padding: 50px 35px;
+      }
+      form * {
+          font-family: 'Poppins', sans-serif;
+          color: #1C2B32;
+          letter-spacing: 0.5px;
+          outline: none;
+          border: none;
+      }
+      form h3 {
+          font-size: 32px;
+          font-weight: 500;
+          line-height: 42px;
+          text-align: center;
+      }
+      label {
+          display: block;
+          margin-top: 30px;
+          font-size: 16px;
+          font-weight: 500;
+      }
+      input {
+          color: #ffffff;
+          display: block;
+          height: 50px;
+          width: 100%;
+          background-color: rgba(0, 0, 0, 0.33);
+          border-radius: 3px;
+          padding: 0 10px;
+          margin-top: 8px;
+          font-size: 14px;
+          font-weight: 300;
+      }
+      ::placeholder {
+          color: #ffffff;
+      }
+      button {
+          margin-top: 50px;
+          width: 100%;
+          background-color: #1C2B32;
+          color: #FE9886;
+          padding: 15px 0;
+          font-size: 18px;
+          font-weight: 600;
+          border-radius: 5px;
+          cursor: pointer;
+      }
+      .flash {
+          background-color: #dff0d8;
+          color: #3c763d;
+          padding: 10px;
+          border-radius: 5px;
+          margin-bottom: 15px;
+          text-align: center;
+          font-weight: 500;
+      }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+
+    <form method="POST">
+        <h3>Redefinir Senha</h3>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash">
+                {% for category, message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+
+        <label for="username">Qual o seu nome de usuario?</label>
+        <input type="text" placeholder="Nome de Usuario" id="username" name="username" required title="Informe o username para realizar o processo de entrada" />
+
+        <button type="submit">Solicitar link</button>
+    </form>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const username = document.getElementById('username');
+            if (username.value.trim() === '') {
+                alert('Informe o username para realizar o processo de entrada.');
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

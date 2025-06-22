@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login - Redes</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        .background {
+            background-image: url('/static/images/login/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+        form {
+            height: 520px;
+            width: 400px;
+            background-color: rgba(0,0,0,0.20);
+            position: absolute;
+            transform: translate(-50%,-50%);
+            top: 50%;
+            left: 50%;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 0 40px rgba(8,7,16,0.2);
+            padding: 50px 35px;
+        }
+        form * {
+            font-family: 'Poppins', sans-serif;
+            color: #1C2B32;
+            letter-spacing: 0.5px;
+            outline: none;
+            border: none;
+        }
+        form h3 {
+            font-size: 32px;
+            font-weight: 500;
+            line-height: 42px;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 30px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        input {
+            color: #ffffff;
+            display: block;
+            height: 50px;
+            width: 100%;
+            background-color: rgba(0,0,0,0.33);
+            border-radius: 3px;
+            padding: 0 10px;
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 300;
+        }
+        ::placeholder {
+            color: #ffffff;
+        }
+        button {
+            margin-top: 50px;
+            width: 100%;
+            background-color: #1C2B32;
+            color: #FFC412;
+            padding: 15px 0;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .flashes {
+            position: fixed;
+            top: 300px;
+            left: 55%;
+            transform: translateX(-230%);
+            z-index: 9999;
+            padding: 10px 20px;
+            border-radius: 5px;
+            width: auto;
+            max-width: 90%;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: fadeout 4s ease forwards;
+        }
+        .flashes.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .flashes.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        @keyframes fadeout {
+            0%   { opacity: 1; }
+            80%  { opacity: 1; }
+            100% { opacity: 0; display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flashes {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <h3>Redes - Entrar</h3>
+
+        <label for="username">Usuario</label>
+        <input type="text" placeholder="Nome de Usuario" id="username" name="username" required minlength="3" maxlength="30" pattern=".{3,30}" title="Informe o username para realizar o processo de entrada" />
+
+        <label for="password">Senha</label>
+        <input type="password" placeholder="Senha" id="password" name="password" required>
+
+        <br>
+        <a href='{{ url_for("redefinir") }}'>Esqueci a senha</a>
+        <button type="submit">Entrar</button>
+    </form>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const username = document.getElementById('username');
+            const password = document.getElementById('password');
+
+            if (username.value.trim().length < 3 || username.value.trim().length > 30) {
+                alert('O nome de usuario deve ter entre 3 e 30 caracteres.');
+                e.preventDefault();
+            }
+
+            if (password.value.trim() === '') {
+                alert('Informe a senha.');
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
